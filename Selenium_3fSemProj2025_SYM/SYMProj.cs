@@ -8,16 +8,16 @@ namespace Selenium_3fSemProj2025_SYM
     public sealed class SYMProj
     {
 
-        private static readonly string DriverDirector = "C:\\webdrivers";
-        //private static readonly string DriverDirector = "C:\\WebDriver";
+        //private static readonly string DriverDirector = "C:\\webdrivers";
+        private static readonly string DriverDirector = "C:\\WebDriver";
         private static IWebDriver _driver;
 
 
         [ClassInitialize]
         public static void setup(TestContext context)
         {
-            _driver = new FirefoxDriver(DriverDirector);
-            //_driver = new ChromeDriver(DriverDirector);
+            //_driver = new FirefoxDriver(DriverDirector);
+            _driver = new ChromeDriver(DriverDirector);
         }
 
         //[ClassCleanup]
@@ -29,8 +29,8 @@ namespace Selenium_3fSemProj2025_SYM
         [TestInitialize]
         public void InitializeTest()
         {
-            string index = "C:\\Datamatiker_3_sem\\3fSemesterProjekt2025\\index.html";
-            //string overview = "C:\\Users\\jonas\\3SemProjFront\\3fSemesterProjektHjemmeside\\oversigt.html";
+            //string index = "C:\\Datamatiker_3_sem\\3fSemesterProjekt2025\\index.html";
+            string index = "C:\\Users\\jonas\\3SemProjFront\\3fSemesterProjektHjemmeside\\index.html";
             _driver.Navigate().GoToUrl(index);
 
             Assert.AreEqual("3fSemesterProjekt", _driver.Title);
@@ -48,6 +48,13 @@ namespace Selenium_3fSemProj2025_SYM
 
             IWebElement pastDayButton = _driver.FindElement(By.Id("past_day_option"));
             pastDayButton.Click();
+
+            Thread.Sleep(2000);
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
+            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length");
+
+            Assert.IsTrue(gpsDataLength > 0);
         }
     }
 }
