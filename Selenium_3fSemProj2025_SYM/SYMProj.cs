@@ -8,23 +8,22 @@ namespace Selenium_3fSemProj2025_SYM
     public sealed class SYMProj
     {
 
-        private static readonly string DriverDirector = "C\\webdrivers";
+        private static readonly string DriverDirector = "C:\\webdrivers";
 
         private static IWebDriver _driver;
 
 
         [ClassInitialize]
-        public static void Setup(TestContext context)
+        public static void setup(TestContext context)
         {
             _driver = new FirefoxDriver(DriverDirector);
-            //_driver = new ChromeDriver(DriverDirector);
         }
 
-        [ClassCleanup]
-        public static void TearDown()
-        {
-            _driver.Dispose();
-        }
+        //[ClassCleanup]
+        //public static void TearDown()
+        //{
+        //    _driver.Dispose();
+        //}
 
         [TestInitialize]
         public void InitializeTest()
@@ -33,13 +32,15 @@ namespace Selenium_3fSemProj2025_SYM
 
             _driver.Navigate().GoToUrl(overview);
 
-            Assert.AreEqual("3fSemesterProjekt", )
+            Assert.AreEqual("3fSemesterProjekt", _driver.Title);
              
         }
 
         [TestMethod]
         public void TestMethod1()
         {
+            IWebElement mainPage = _driver.FindElement(By.Id("main_page_button"));
+            mainPage.Click();
         }
     }
 }
