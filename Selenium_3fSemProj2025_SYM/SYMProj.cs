@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
 
 namespace Selenium_3fSemProj2025_SYM
 {
@@ -41,20 +42,36 @@ namespace Selenium_3fSemProj2025_SYM
 
 
         [TestMethod]
-        public void ShowPastDayTest()
-        {
+        public void ShowPastDayTest() {
+            // Click the button that opens the period dropdown
             IWebElement periodButton = _driver.FindElement(By.Id("choose_period_button"));
             periodButton.Click();
 
+            // Click the "Past Day" option
             IWebElement pastDayButton = _driver.FindElement(By.Id("past_day_option"));
             pastDayButton.Click();
 
-            Thread.Sleep(2000);
-
+            // Now wait until Vue has updated the gpsData after filtering
             IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
-            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length");
+            WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
 
-            Assert.IsTrue(gpsDataLength > 0);
+            wait.Until(driver =>
+            {
+                try
+                {
+                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.gpsData && window.vueApp.gpsData.length > 0;");
+                    return result is bool b && b;
+                }
+                catch
+                {
+                    return false;
+                }
+            });
+
+            // Finally, check the length
+            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length;");
+            Assert.IsTrue(gpsDataLength > 0, "gpsData should contain at least one point for the past day.");
         }
+
     }
 }
