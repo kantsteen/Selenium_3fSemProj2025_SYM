@@ -29,8 +29,12 @@ namespace Selenium_3fSemProj2025_SYM
         [TestInitialize]
         public void InitializeTest()
         {
-            string mainPage = "C:\\Datamatiker_3_sem\\3fSemesterProjekt2025\\index.html";
-            string 
+            string overview = "C:\\Datamatiker_3_sem\\3fSemesterProjekt2025\\oversigt.html";
+
+            _driver.Navigate().GoToUrl(overview);
+
+            Assert.AreEqual("3fSemesterProjekt", )
+             
         }
 
         [TestMethod]
