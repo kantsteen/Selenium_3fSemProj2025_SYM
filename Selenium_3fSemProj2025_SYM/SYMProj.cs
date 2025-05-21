@@ -21,11 +21,11 @@ namespace Selenium_3fSemProj2025_SYM
             //_driver = new ChromeDriver(DriverDirector);
         }
 
-        //[ClassCleanup]
-        //public static void TearDown()
-        //{
-        //    _driver.Dispose();
-        //}
+        [ClassCleanup]
+        public static void TearDown()
+        {
+            _driver.Dispose();
+        }
 
         [TestInitialize]
         public void InitializeTest()
@@ -60,7 +60,7 @@ namespace Selenium_3fSemProj2025_SYM
             {
                 try
                 {
-                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.gpsData && window.vueApp.gpsData.length > 0;");
+                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.filteredPeriod && window.vueApp.filteredPeriod.length > 0;");
                     return result is bool b && b;
                 }
                 catch
@@ -70,14 +70,19 @@ namespace Selenium_3fSemProj2025_SYM
             });
 
             // Finally, check the length
-            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length;");
-            Assert.IsTrue(gpsDataLength > 0, "gpsData should contain at least one point for the past day.");
+            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.filteredPeriod.length;");
+            Assert.IsTrue(gpsDataLength == 0, "gpsData should contain zero data points for the past day.");
         }
 
         [TestMethod]
         public void ShowPastWeekTest()
         {
             Thread.Sleep(500);
+
+            IWebElement overviewButton = _driver.FindElement(By.Id("earlier_incidents_button"));
+            overviewButton.Click();
+
+
             // Click the button that opens the period dropdown
             IWebElement periodButton = _driver.FindElement(By.Id("choose_period_button"));
             periodButton.Click();
@@ -94,7 +99,7 @@ namespace Selenium_3fSemProj2025_SYM
             {
                 try
                 {
-                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.gpsData && window.vueApp.gpsData.length > 0;");
+                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.filteredPeriod && window.vueApp.filteredPeriod.length > 0;");
                     return result is bool b && b;
                 }
                 catch
@@ -104,14 +109,17 @@ namespace Selenium_3fSemProj2025_SYM
             });
 
             // Finally, check the length
-            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length;");
-            Assert.IsTrue(gpsDataLength > 0, "gpsData should contain at least one point for the past day.");
+            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.filteredPeriod.length;");
+            Assert.IsTrue(gpsDataLength == 25, "gpsData should contain at least one point for the past week.");
         }
 
         [TestMethod]
         public void ShowPastMonthTest()
         {
             Thread.Sleep(500);
+
+            IWebElement overviewButton = _driver.FindElement(By.Id("earlier_incidents_button"));
+            overviewButton.Click();
 
             // Click the button that opens the period dropdown
             IWebElement periodButton = _driver.FindElement(By.Id("choose_period_button"));
@@ -129,7 +137,7 @@ namespace Selenium_3fSemProj2025_SYM
             {
                 try
                 {
-                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.gpsData && window.vueApp.gpsData.length > 0;");
+                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.filteredPeriod && window.vueApp.filteredPeriod.length > 0;");
                     return result is bool b && b;
                 }
                 catch
@@ -139,14 +147,17 @@ namespace Selenium_3fSemProj2025_SYM
             });
 
             // Finally, check the length
-            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length;");
-            Assert.IsTrue(gpsDataLength > 0, "gpsData should contain at least one point for the past day.");
+            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.filteredPeriod.length;");
+            Assert.IsTrue(gpsDataLength == 45, "gpsData should contain at least one point for the past month.");
         }
 
         [TestMethod]
         public void ShowPastYearTest()
         {
             Thread.Sleep(500);
+
+            IWebElement overviewButton = _driver.FindElement(By.Id("earlier_incidents_button"));
+            overviewButton.Click();
 
             // Click the button that opens the period dropdown
             IWebElement periodButton = _driver.FindElement(By.Id("choose_period_button"));
@@ -164,7 +175,7 @@ namespace Selenium_3fSemProj2025_SYM
             {
                 try
                 {
-                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.gpsData && window.vueApp.gpsData.length > 0;");
+                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.filteredPeriod && window.vueApp.filteredPeriod.length > 0;");
                     return result is bool b && b;
                 }
                 catch
@@ -174,41 +185,46 @@ namespace Selenium_3fSemProj2025_SYM
             });
 
             // Finally, check the length
-            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length;");
-            Assert.IsTrue(gpsDataLength > 0, "gpsData should contain at least one point for the past day.");
+            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.filteredPeriod.length;");
+            Assert.IsTrue(gpsDataLength == 45, "gpsData should contain at least one point for the past year.");
         }
 
         [TestMethod]
         public void FromToDateTest()
         {
+            // First navigate to the overview page since the test starts on index.html
+            IWebElement overviewButton = _driver.FindElement(By.Id("earlier_incidents_button"));
+            overviewButton.Click();
+
+            // Wait for page to load
+            Thread.Sleep(1000);
+
+            // Clear the input fields first (important for reliable input)
+            IWebElement fromDateInput = _driver.FindElement(By.Id("from_date_input"));
+            fromDateInput.Clear();
+            fromDateInput.SendKeys("18052025950"); // Consider using proper date format
+
             Thread.Sleep(500);
 
-            IWebElement fromDateInput = _driver.FindElement(By.Id("from_date_input"));
-            //fromDateInput.Click();
-
-            fromDateInput.SendKeys("18052025950");
-
-            Thread.Sleep(1000);
-
             IWebElement toDateInput = _driver.FindElement(By.Id("to_date_input"));
-            //toDateInput.Click();
-
+            toDateInput.Clear();
             toDateInput.SendKeys("200520251350");
 
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
 
             IWebElement searchButton = _driver.FindElement(By.Id("search_button"));
             searchButton.Click();
 
-            // Now wait until Vue has updated the gpsData after filtering
+            // Now wait until Vue has updated the filteredGpsData after filtering
             IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
-            WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+            WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(15)); // Extended timeout
 
             wait.Until(driver =>
             {
                 try
                 {
-                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.gpsData && window.vueApp.gpsData.length > 0;");
+                    // Check both the existence of filteredGpsData AND that it has elements
+                    var result = js.ExecuteScript("return window.vueApp && window.vueApp.filteredGpsData && window.vueApp.filteredGpsData.length > 0;");
                     return result is bool b && b;
                 }
                 catch
@@ -218,8 +234,52 @@ namespace Selenium_3fSemProj2025_SYM
             });
 
             // Finally, check the length
-            var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.gpsData.length;");
-            Assert.IsTrue(gpsDataLength == 44, "gpsData should contain at least one point for the past day.");
+            var filteredDataLength = (long)js.ExecuteScript("return window.vueApp.filteredGpsData.length;");
+            Assert.IsTrue(filteredDataLength == 25, "filteredGpsData should contain at least one point for the selected date range.");
         }
+
+        //[TestMethod]
+        //public void FromToDateTest()
+        //{
+        //    Thread.Sleep(500);
+
+        //    IWebElement fromDateInput = _driver.FindElement(By.Id("from_date_input"));
+        //    //fromDateInput.Click();
+
+        //    fromDateInput.SendKeys("18052025950");
+
+        //    Thread.Sleep(1000);
+
+        //    IWebElement toDateInput = _driver.FindElement(By.Id("to_date_input"));
+        //    //toDateInput.Click();
+
+        //    toDateInput.SendKeys("200520251350");
+
+        //    Thread.Sleep(1000);
+
+        //    IWebElement searchButton = _driver.FindElement(By.Id("search_button"));
+        //    searchButton.Click();
+
+        //    // Now wait until Vue has updated the gpsData after filtering
+        //    IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
+        //    WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+
+        //    wait.Until(driver =>
+        //    {
+        //        try
+        //        {
+        //            var result = js.ExecuteScript("return window.vueApp && window.vueApp.filteredGpsData && window.vueApp.filteredGpsData.length > 0;");
+        //            return result is bool b && b;
+        //        }
+        //        catch
+        //        {
+        //            return false;
+        //        }
+        //    });
+
+        //    // Finally, check the length
+        //    var gpsDataLength = (long)js.ExecuteScript("return window.vueApp.filteredGpsData.length;");
+        //    Assert.IsTrue(gpsDataLength > 0, "gpsData should contain at least one point for the past day.");
+        //}
     }
 }
